@@ -86,6 +86,11 @@ def _compound_frequently(d_0: Union[float, ndarray[float]],
     :param m: compounding frequency or matrix of frequencies
     :return: deposit after n periods or matrix of deposits
     """
+    if isinstance(m, ndarray):
+        assert (m > 0).all(), 'Frequencies have to be a non-negative integers.'
+    else:
+        assert m > 0, 'Frequency has to be a non-negative integer.'
+
     return _compound(d_0, n * m, p / m)
 
 
