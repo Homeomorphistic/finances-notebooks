@@ -9,8 +9,7 @@ Not to be used by a user.
 from math import log
 from typing import Union, Iterable
 
-import numpy as np
-from numpy import ndarray
+from numpy import ndarray, array
 
 
 def _compound(d_0: Union[float, ndarray[float]],
@@ -59,6 +58,11 @@ def _compound_iterate(d_0: Union[float, Iterable[float]],
     :param p: periodic interest rate or iterable of interests
     :return: deposit after n periods or iterable of deposits
     """
+    # Convert floats to list of one float for iteration.
+    d_0 = d_0 if isinstance(d_0, Iterable) else [d_0]
+    n = n if isinstance(n, Iterable) else [n]
+    p = p if isinstance(p, Iterable) else [p]
+
     for i, (d_i, n_i, p_i) in enumerate(zip(d_0, n, p)):
         d_n = d_i
         for _ in range(n_i):
@@ -67,14 +71,20 @@ def _compound_iterate(d_0: Union[float, Iterable[float]],
     return d_0
 
 
-def _compound_frequently(d_0: float, n: Union[float, ndarray[float]], p: float, m: int) -> Union[float, ndarray[float]]:
+def _compound_frequently(d_0: Union[float, ndarray[float]],
+                         n: Union[int, ndarray[int]],
+                         p: Union[float, ndarray[float]],
+                         m: Union[int, ndarray[int]]
+                         ) -> Union[float, ndarray[float]]:
     """Calculate compound interest of initial deposit d_0 after n periods with compounding frequency m.
 
-    :param d_0: initial deposit
-    :param n: number of periods
-    :param p: periodic interest rate
-    :param m: compounding frequency
-    :return: deposit after n periods
+    Matrices have to be broadcastable to obtain any result.
+
+    :param d_0: initial deposit or matrix of initial deposits
+    :param n: number of periods or matrix of numbers
+    :param p: periodic interest rate or matrix of interests
+    :param m: compounding frequency or matrix of frequencies
+    :return: deposit after n periods or matrix of deposits
     """
     return _compound(d_0, n * m, p / m)
 

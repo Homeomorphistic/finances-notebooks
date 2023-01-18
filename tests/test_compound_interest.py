@@ -79,15 +79,3 @@ class Test(TestCase):
         # Then it has the equal results as in closed-form formula
         desired = _compound(d_0=self.d_0.copy(), n=self.n, p=self.p)
         assert_allclose(actual=d_n_iter, desired=desired, atol=.01, err_msg='Some deposit amounts do not match.')
-
-    # def test_compound_frequently(self):
-    #     self.fail()
-    #
-    # def test_compound_continuous(self):
-    #     self.fail()
-    #
-    # def test_contribute_compound(self):
-    #     self.fail()
-    #
-    # def test_deposit(self):
-    #     self.fail()
