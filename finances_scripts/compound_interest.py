@@ -1,0 +1,103 @@
+# compound_interest.py
+"""A module containing base for whole computations done in notebooks.
+
+It contains closed-form formulas for basic ideas in finances and also their empirical computations used for testing.
+
+Not to be used by a user.
+"""
+
+from math import log
+from typing import Union, Iterable
+
+import numpy as np
+from numpy import ndarray
+
+
+def _compound(d_0: Union[float, ndarray[float]],
+              n: Union[int, ndarray[int]],
+              p: Union[float, ndarray[float]]
+              ) -> Union[float, ndarray[float]]:
+    """Calculate compound interest of initial deposit d_0 after n periods.
+
+    Matrices have to be broadcastable to obtain any result.
+
+    :param d_0: initial deposit or matrix of initial deposits
+    :param n: number of periods or matrix of numbers
+    :param p: periodic interest rate or matrix of interests
+    :return: deposit after n periods or matrix of deposits
+    """
+    return d_0 * (1 + p)**n
+
+
+def _compound_recursive(d_0: float, n: int, p: float) -> float:
+    """Compute compound interest of initial deposit d_0 after n periods recursively.
+
+    This method exists solely for testing purposes.
+
+        :param d_0: initial deposit
+        :param n: number of periods
+        :param p: periodic interest rate
+        :return: deposit after n periods
+        """
+    assert n >= 0, 'Number of periods has to be non-negative integer (using recursive method).'
+    if n == 0:
+        return d_0
+    else:
+        return _compound_recursive(d_0, n-1, p) * (1+p)
+
+
+def _compound_iterate(d_0: Union[float, Iterable[float]],
+                      n: Union[int, Iterable[int]],
+                      p: Union[float, Iterable[float]]
+                      ) -> Union[float, Iterable[float]]:
+    """Compute compound interest of initial deposit d_0 after n periods iteratively.
+
+    This method exists solely for testing purpose. Matrices have to be broadcastable to obtain any result.
+
+    :param d_0: initial deposit or iterable of initial deposits
+    :param n: number of periods or iterable of numbers
+    :param p: periodic interest rate or iterable of interests
+    :return: deposit after n periods or iterable of deposits
+    """
+    for i, (d_i, n_i, p_i) in enumerate(zip(d_0, n, p)):
+        d_n = d_i
+        for _ in range(n_i):
+            d_n *= (1+p_i)
+        d_0[i] = d_n
+    return d_0
+
+
+def _compound_frequently(d_0: float, n: Union[float, ndarray[float]], p: float, m: int) -> Union[float, ndarray[float]]:
+    """Calculate compound interest of initial deposit d_0 after n periods with compounding frequency m.
+
+    :param d_0: initial deposit
+    :param n: number of periods
+    :param p: periodic interest rate
+    :param m: compounding frequency
+    :return: deposit after n periods
+    """
+    return _compound(d_0, n * m, p / m)
+
+
+def compound_continuous(d_0: float, t: float, p: float):
+    return d_0 * log(p * t)
+
+
+def contribute_compound(d_0: float, n: int, p: float, c: float):
+    """Calculate compound interest of initial deposit d_0 after n periods with contributions c per period.
+
+    :param d_0: initial deposit
+    :param n: number of periods
+    :param p: periodic interest rate
+    :param c: contribution to the deposit per period
+    :return: deposit after n periods
+    """
+    return _compound(d_0, n, p) + c * (1 - (1 + p) ** n) / (-p)
+
+
+def deposit(initial_deposit: float, periods: int, interest: float, frequency: int, inflation: float, tax: float=.19):
+    pass
+
+
+if __name__ == '__main__':
+    pass
