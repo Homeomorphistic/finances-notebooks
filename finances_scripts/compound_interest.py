@@ -93,10 +93,10 @@ def _compound_frequently(d_0: Union[float, ndarray[float]],
     return _compound(d_0, n * m, p / m)
 
 
-def compound_continuous(d_0: Union[float, ndarray[float]],
-                        t: Union[float, ndarray[float]],
-                        p: Union[float, ndarray[float]]
-                        ) -> Union[float, ndarray[float]]:
+def _compound_continuous(d_0: Union[float, ndarray[float]],
+                         t: Union[float, ndarray[float]],
+                         p: Union[float, ndarray[float]]
+                         ) -> Union[float, ndarray[float]]:
     """Calculate compound interest of initial deposit d_0 after t time with continuous compounding.
 
         Matrices have to be broadcastable to obtain any result.
