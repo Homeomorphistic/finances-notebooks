@@ -99,13 +99,13 @@ def _compound_continuous(d_0: Union[float, ndarray[float]],
                          ) -> Union[float, ndarray[float]]:
     """Calculate compound interest of initial deposit d_0 after t time with continuous compounding.
 
-        Matrices have to be broadcastable to obtain any result.
+    Matrices have to be broadcastable to obtain any result.
 
-        :param d_0: initial deposit or matrix of initial deposits
-        :param t: time or matrix of times
-        :param p: periodic interest rate or matrix of interests
-        :return: deposit after t time or matrix of deposits
-        """
+    :param d_0: initial deposit or matrix of initial deposits
+    :param t: time or matrix of times
+    :param p: periodic interest rate or matrix of interests
+    :return: deposit after t time or matrix of deposits
+    """
     return d_0 * exp(p * t)
 
 

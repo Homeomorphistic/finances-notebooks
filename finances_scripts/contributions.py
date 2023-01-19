@@ -26,6 +26,7 @@ def _compound_and_contribute(d_0: Union[float, ndarray[float]],
     :param c: periodic contribution or matrix of contributions
     :return: deposit after n periods or matrix of deposits
     """
+    # TODO n>0
     return _compound(d_0, n, p) + c * (1 - (1+p)**n) / (-p) - c  # -c -> without last payment
 
 
