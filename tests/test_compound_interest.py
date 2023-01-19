@@ -9,7 +9,7 @@ from finances_scripts.compound_interest import _compound, _compound_iterate, _co
 class Test(TestCase):
     def setUp(self) -> None:
         # Initial deposit.
-        self.d_0 = array([1000, 1500, 2000])
+        self.d_0 = array([1000.0, 1500, 2000])
         # Number of periods.
         self.n = array([0, 1, 2])
         # Periodic interest rate.
@@ -99,7 +99,7 @@ class Test(TestCase):
 
     def test_zero_frequency_compound_fails(self):
         # Given initial deposit, number of periods, periodic interest rate and frequency equal to zero
-        m=0
+        m = 0
         # When I calculate amount of deposit
         # Then I get an error, because of division by zero
         self.assertRaises(AssertionError, lambda: _compound_frequently(d_0=1000, n=1, p=.05, m=m))
@@ -115,7 +115,7 @@ class Test(TestCase):
     def test_all_vectors_compound_frequently(self):
         # Given vectors of initial deposits, number of periods, periodic interest rates and frequencies
         # When I calculate amount of deposit for each
-        d_n= _compound_frequently(d_0=self.d_0.copy(), n=self.n, p=self.p, m=self.m)
+        d_n = _compound_frequently(d_0=self.d_0.copy(), n=self.n, p=self.p, m=self.m)
         # Then it has the equal results as in iterative method
         desired = _compound_iterate(d_0=self.d_0.copy(), n=self.n*self.m, p=self.p/self.m)
         assert_allclose(actual=d_n, desired=desired, atol=.01, err_msg='Some deposit amounts do not match.')

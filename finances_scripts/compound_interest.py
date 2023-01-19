@@ -6,10 +6,9 @@ It contains closed-form formulas for basic ideas in finances and also their empi
 Not to be used by a user.
 """
 
-from math import log
 from typing import Union, Iterable
 
-from numpy import ndarray, array
+from numpy import ndarray, exp
 
 
 def _compound(d_0: Union[float, ndarray[float]],
@@ -94,8 +93,20 @@ def _compound_frequently(d_0: Union[float, ndarray[float]],
     return _compound(d_0, n * m, p / m)
 
 
-def compound_continuous(d_0: float, t: float, p: float):
-    return d_0 * log(p * t)
+def compound_continuous(d_0: Union[float, ndarray[float]],
+                        t: Union[float, ndarray[float]],
+                        p: Union[float, ndarray[float]]
+                        ) -> Union[float, ndarray[float]]:
+    """Calculate compound interest of initial deposit d_0 after t time with continuous compounding.
+
+        Matrices have to be broadcastable to obtain any result.
+
+        :param d_0: initial deposit or matrix of initial deposits
+        :param t: time or matrix of times
+        :param p: periodic interest rate or matrix of interests
+        :return: deposit after t time or matrix of deposits
+        """
+    return d_0 * exp(p * t)
 
 
 def contribute_compound(d_0: float, n: int, p: float, c: float):
@@ -108,10 +119,6 @@ def contribute_compound(d_0: float, n: int, p: float, c: float):
     :return: deposit after n periods
     """
     return _compound(d_0, n, p) + c * (1 - (1 + p) ** n) / (-p)
-
-
-def deposit(initial_deposit: float, periods: int, interest: float, frequency: int, inflation: float, tax: float=.19):
-    pass
 
 
 if __name__ == '__main__':
