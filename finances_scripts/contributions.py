@@ -7,7 +7,7 @@ Not to be used by a user.
 """
 from typing import Union, Iterable
 
-from numpy import ndarray, exp
+from numpy import ndarray
 
 from .compound_interest import _compound
 
