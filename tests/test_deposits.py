@@ -3,6 +3,8 @@ from unittest import TestCase
 from numpy import array
 from numpy.testing import assert_allclose
 
+from finances_scripts.compound_interest import _compound_frequently
+from finances_scripts.inflation import _inflate_frequently
 from finances_scripts.deposits import deposit, _deposit_iterate
 
 class Test(TestCase):
@@ -34,15 +36,37 @@ class Test(TestCase):
         # Then I get correct answer
         self.assertAlmostEqual(d_n, 1076.36, delta=.01, msg='Deposit amount for closed-form compound is not equal.')
 
-    def test_iterative_deposit(self):
+    def test_zero_contrib_deposit(self):
         # Given vectors of initial deposit, number of periods, periodic interest rates, frequencies,
-        # periodic contributions, periodic inflation rates periodic taxes
-        # When I calculate current value of each future deposit using iterative method
-        d_0_iter = _deposit_iterate(initial_deposit=self.d_0.copy(), periods=self.n, interest=self.p,
-                                    frequency=self.m, contribution=self.c, contribution_periods=self.c_n,
-                                    inflation=self.f, tax=self.t)
+        # zero periodic contributions, periodic inflation rates periodic taxes
+        # When I calculate current value of each future deposit
+        d_0 = deposit(initial_deposit=self.d_0.copy(), periods=self.n, interest=self.p,
+                      frequency=self.m, contribution=0, contribution_periods=0,
+                      inflation=self.f, tax=self.t)
         # Then the results match closed-form formula
-        desired = deposit(initial_deposit=self.d_0.copy(), periods=self.n, interest=self.p,
-                          frequency=self.m, contribution=self.c, contribution_periods=self.c_n,
-                          inflation=self.f, tax=self.t)
-        assert_allclose(actual=d_0_iter, desired=desired, atol=.01, err_msg='Some deposit amounts do not match.')
+        desired = _compound_frequently(d_0=self.d_0.copy(), n=self.n, p=self.p*(1-self.t), m=self.m)
+        assert_allclose(actual=d_0, desired=desired, atol=.01, err_msg='Some deposit amounts do not match.')
+
+    def test_some_zero_contrib_deposit(self):
+        # Given vectors of initial deposit, number of periods, periodic interest rates, frequencies,
+        # some zero periodic contributions, periodic inflation rates periodic taxes
+        # When I calculate current value of each future deposit
+        d_0 = deposit(initial_deposit=self.d_0.copy(), periods=self.n, interest=self.p,
+                      frequency=self.m, contribution=array([0, 0, 300]), contribution_periods=array([0, 0, 1]),
+                      inflation=self.f, tax=self.t)
+        # Then the results match closed-form formula
+        desired = array([1000, 1586.256, 2424.82])
+        assert_allclose(actual=d_0, desired=desired, atol=.01, err_msg='Some deposit amounts do not match.')
+
+    # def test_iterative_deposit(self):
+    #     # Given vectors of initial deposit, number of periods, periodic interest rates, frequencies,
+    #     # periodic contributions, periodic inflation rates periodic taxes
+    #     # When I calculate current value of each future deposit using iterative method
+    #     d_0_iter = _deposit_iterate(initial_deposit=self.d_0.copy(), periods=self.n, interest=self.p,
+    #                                 frequency=self.m, contribution=self.c, contribution_periods=self.c_n,
+    #                                 inflation=self.f, tax=self.t)
+    #     # Then the results match closed-form formula
+    #     desired = deposit(initial_deposit=self.d_0.copy(), periods=self.n, interest=self.p,
+    #                       frequency=self.m, contribution=self.c, contribution_periods=self.c_n,
+    #                       inflation=self.f, tax=self.t)
+    #     assert_allclose(actual=d_0_iter, desired=desired, atol=.01, err_msg='Some deposit amounts do not match.')

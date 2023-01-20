@@ -11,6 +11,7 @@ from numpy import ndarray
 
 from .compound_interest import _compound
 
+
 def _compound_and_contribute(d_0: Union[float, ndarray[float]],
                              n: Union[int, ndarray[int]],
                              p: Union[float, ndarray[float]],
