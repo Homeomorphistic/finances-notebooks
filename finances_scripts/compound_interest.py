@@ -1,11 +1,11 @@
 # compound_interest.py
-"""A module containing base for whole computations done in notebooks.
+"""A module containing base for all computations done in notebooks.
 
 It contains closed-form formulas for basic ideas in finances and also their empirical computations used for testing.
 
 Not to be used by a user.
 """
-
+from operator import mul, truediv
 from typing import Union, Iterable
 
 from numpy import ndarray, exp
@@ -20,54 +20,53 @@ def _compound(d_0: Union[float, ndarray[float]],
     Matrices have to be broadcastable to obtain any result.
 
     :param d_0: initial deposit or matrix of initial deposits
-    :param n: number of periods or matrix of numbers
+    :param n: number of periods or matrix of periods
     :param p: periodic interest rate or matrix of interests
     :return: deposit after n periods or matrix of deposits
     """
     return d_0 * (1 + p)**n
 
 
-def _compound_recursive(d_0: float, n: int, p: float) -> float:
+def _compound_recursive(d_0: Union[float, ndarray[float]],
+                        n: int,
+                        p: Union[float, ndarray[float]]
+                        ) -> Union[float, ndarray[float]]:
     """Compute compound interest of initial deposit d_0 after n periods recursively.
 
-    This method exists solely for testing purposes.
+    This method exists solely for testing purposes. Matrices have to be broadcastable to obtain any result.
 
-        :param d_0: initial deposit
-        :param n: number of periods
-        :param p: periodic interest rate
-        :return: deposit after n periods
-        """
-    assert n >= 0, 'Number of periods has to be non-negative integer (using recursive method).'
+    :param d_0: initial deposit or matrix of initial deposits
+    :param n: number of periods
+    :param p: periodic interest rate or matrix of interests
+    :return: deposit after n periods or matrix of deposits
+    """
+    op = mul if n >= 0 else truediv  # if n is negative then we need to divide.
     if n == 0:
         return d_0
     else:
-        return _compound_recursive(d_0, n-1, p) * (1+p)
+        n = n-1 if n > 0 else n+1  # if n is negative then we need to increase it to reach 0.
+        return op(_compound_recursive(d_0, n, p), 1+p)
 
 
-def _compound_iterate(d_0: Union[float, Iterable[float]],
-                      n: Union[int, Iterable[int]],
-                      p: Union[float, Iterable[float]]
-                      ) -> Union[float, Iterable[float]]:
+def _compound_iterative(d_0: Union[float, Iterable[float]],
+                        n: int,
+                        p: Union[float, Iterable[float]]
+                        ) -> Union[float, Iterable[float]]:
     """Compute compound interest of initial deposit d_0 after n periods iteratively.
 
     This method exists solely for testing purpose. Matrices have to be broadcastable to obtain any result.
 
     :param d_0: initial deposit or iterable of initial deposits
-    :param n: number of periods or iterable of numbers
+    :param n: number of periods
     :param p: periodic interest rate or iterable of interests
     :return: deposit after n periods or iterable of deposits
     """
-    # Convert floats to list of one float for iteration.
-    d_0 = d_0 if isinstance(d_0, Iterable) else [d_0]
-    n = n if isinstance(n, Iterable) else [n]
-    p = p if isinstance(p, Iterable) else [p]
-
-    for i, (d_i, n_i, p_i) in enumerate(zip(d_0, n, p)):
-        d_n = d_i
-        for _ in range(n_i):
-            d_n *= (1+p_i)
-        d_0[i] = d_n
-    return d_0
+    op = mul if n >= 0 else truediv  # if n is negative then we need to divide.
+    n = abs(n)
+    d_n = d_0
+    for i in range(n):
+        d_n = op(d_n, 1+p)
+    return d_n
 
 
 def _compound_frequently(d_0: Union[float, ndarray[float]],
