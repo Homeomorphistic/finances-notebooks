@@ -3,7 +3,7 @@ from unittest import TestCase
 from numpy import array
 from numpy.testing import assert_allclose
 
-from finances_scripts.compound_interest import _compound, _compound_iterate, _compound_recursive, _compound_frequently
+from finances_scripts.compound_interest import _compound, _compound_iterate, _compound_recursive_helper, _compound_frequently
 
 
 class Test(TestCase):
@@ -29,7 +29,7 @@ class Test(TestCase):
         # When I calculate amount of deposit at n-th period using iterative and recursive methods
         d_n = _compound(d_0=self.d_0[0], n=self.n[-1], p=self.p[0])
         d_n_iter = _compound_iterate(d_0=self.d_0[0], n=self.n[-1], p=self.p[0])
-        d_n_rec = _compound_recursive(d_0=self.d_0[0], n=self.n[-1], p=self.p[0])
+        d_n_rec = _compound_recursive_helper(d_0=self.d_0[0], n=self.n[-1], p=self.p[0])
         # Then I get equal results
         self.assertAlmostEqual(d_n, d_n_iter, delta=.01, msg='Deposit amounts for closed and iterative compound'
                                                              ' are not equal.')
