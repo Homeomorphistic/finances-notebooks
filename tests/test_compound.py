@@ -1,9 +1,9 @@
 import pytest
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_array_less
 from numpy import array
 
-from finances_scripts.compound_interest import _compound, _compound_recursive_helper, _compound_iterative_helper, \
-    _compound_recursive, _compound_iterative, _compound_frequently
+from finances_scripts.compound import _compound, _compound_recursive_helper, _compound_iterative_helper, \
+    _compound_recursive, _compound_iterative, _compound_frequently, _compound_continuous
 
 
 @pytest.mark.parametrize("d_0, n, p, d_n", [
@@ -101,7 +101,7 @@ def test_compound_iterative(d_0, n, p):
     (1000, array([-2, 0, 4]), 0.05, 2),
     (1000, 5, array([-0.05, 0, 0.05]), 2),
     (1000, 5, 0.05, array([1, 2, 3])),
-    (array([-1000, 0, 1000]), [-3, 0, 3], array([-0.05, 0, 0.05]), array([1, 2, 3]))
+    (array([-1000, 0, 1000]), array([-3, 0, 3]), array([-0.05, 0, 0.05]), array([1, 2, 3]))
 ])
 def test_compound_frequently(d_0, n, p, m):
     assert_allclose(actual=_compound_frequently(d_0, n, p, m), desired=_compound_iterative(d_0, n*m, p/m),
@@ -119,3 +119,16 @@ def test_compound_frequently(d_0, n, p, m):
 def test_compound_frequently_raises_error_when_negative_or_zero_frequency(d_0, n, p, m):
     with pytest.raises(AssertionError):
         _compound_frequently(d_0, n, p, m)
+
+
+@pytest.mark.parametrize("d_0, n, p, m", [
+    (1000, 2, 0.05, 2),
+    (array([200, 1000]), 2, 0.05, 2),
+    (1000, array([1, 2, 4]), 0.05, 2),
+    (1000, 5, array([0.01, 0.02, 0.05]), 2),
+    (1000, 5, 0.05, array([1, 2, 3])),
+    (array([10, 500, 1000]), [1, 2, 3], array([0.01, 0.02, 0.05]), array([1, 2, 3]))
+])
+def test_compound_continuous_always_greater_than_discrete(d_0, n, p, m):
+    assert_array_less(_compound_frequently(d_0, n, p, m), _compound_continuous(d_0, n, p),
+                      err_msg="Continuous compounding is not greater than discrete.")

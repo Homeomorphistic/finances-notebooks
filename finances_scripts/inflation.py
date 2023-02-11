@@ -9,7 +9,7 @@ from typing import Union, Iterable
 
 from numpy import ndarray
 
-from .compound_interest import _compound, _compound_frequently, _compound_continuous
+from .compound import _compound, _compound_frequently, _compound_continuous
 
 
 def _inflate(d_n: Union[float, ndarray[float]],

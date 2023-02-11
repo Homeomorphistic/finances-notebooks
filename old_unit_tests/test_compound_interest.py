@@ -3,7 +3,7 @@ from unittest import TestCase
 from numpy import array
 from numpy.testing import assert_allclose
 
-from finances_scripts.compound_interest import _compound, _compound_iterate, _compound_recursive_helper, _compound_frequently
+from finances_scripts.compound import _compound, _compound_iterate, _compound_recursive_helper, _compound_frequently
 
 
 class Test(TestCase):

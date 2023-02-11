@@ -9,7 +9,7 @@ from typing import Union, Iterable
 
 from numpy import ndarray, exp
 
-from .compound_interest import _compound
+from .compound import _compound
 
 def _compound_and_contribute(d_0: Union[float, ndarray[float]],
                              n: Union[int, ndarray[int]],
